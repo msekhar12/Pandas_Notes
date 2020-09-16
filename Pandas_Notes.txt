@@ -1,0 +1,601 @@
+1. df = pd.read_csv("...path", index_col="...", sep="...")
+2. df.index # To access index as any other column
+3. df['col_a'] # will get the data of column a as a Series object
+4. df[['col_1', 'col_2']] # will get the data of columns col_a, col_2. You will get a DataFrame
+5. If you supply a list of strings like this `d[['a','b']]` then they are treated as column names
+7. If you supply a list of boolean values like this:
+   l = [True, False, False ...] # l has the length equal to the number of rows of df
+   df[l] will get the list of rows wherever we have True values in l.
+   Make sure that the length of the boolean list MUST be the same as the number of rows in the data frame
+8. A DataFrame or Series object have row labels (also called as index labels)
+    If nothing is specified as index when we create a DataFrame or Series, then the row labels
+    will be the numbers from 0, 1, 2, ... (n-1) where n = number of rows of DataFrame or Series
+9. You can access the columns of a DataFrame in many ways, but the following are the three important ways:
+    a. df[<List of column names>]
+    b. df.loc[<list of row labels>, <list of columns>]
+    c. df.iloc[<row numbers>, <column numbers>]
+    d. Some variations:
+       df.iloc[:,[column numbers]] # to access all rows and specified col numbers
+       df.loc[:, [list of columns]] # to access all rows and specified columns
+       df.iloc[:, [boolean list of columns of size df.shape[1]]]
+       df.loc[:, [boolean list of columns of size df.shape[1]]]
+
+10. You can access DataFrame's rows in at least three ways:
+    a. df[<boolean list of length df.shape[0]>]
+    b. df.loc[<list of row labels>] or df.loc[<boolean list of length df.shape[0]>]
+    c. df.iloc[<row numbers>] or df.iloc[<boolean list of length df.shape[0]>]
+
+SELECTIVE UPDATE OF VALUES:
+You can use df.loc[] or df.iloc[] to selectively update the elements of DataFrame
+Examples:
+df = pd.DataFrame({'a':[1,2,3,4],'b':[10,20,20,30]})
+df has this data:
+   a	| b
+  ---|---
+0	 1	| 10
+1	 2	| 20
+2	 3	| 20
+3	 4	| 30
+
+df.iloc[[True,False, False, True]] will get the following data:
+   a	| b
+  ---|---
+0	 1	| 10
+3	 4	| 30
+
+df.iloc[[True,False, False, True],[True, True]] = 100 will update all the elements that are qualified to 100:
+The df will now have the following data:
+   a	| b
+   ---|---
+0	100	| 100
+1	 2	| 20
+2	 3	| 20
+3	100	| 100
+
+SO ALWAYS USE df.iloc[] or df.loc[] to selectively update the elements of the data frame.
+
+11. For Series object also you can use the following 3 ways to access an element:
+      a. S[<row label>]
+      b. S.loc[<row label]
+      c. S.iloc[<row number>]
+12. When you use df.iloc[], all the list slicing and dicing techniques can be used.
+
+Examples:
+    Create a DataFrame:
+          df = pd.DataFrame({'a': [1,2,3,4,5],
+                             'b': [10,20,30,40,50],
+                             'c':['a','b','c','d','e']},
+                             index=['row-1', 'row-2', 'row-3',
+                             'row-4', 'row-5'])
+    Print the data frame:
+                a	b	  c
+        -------+-------
+        row-1  |1	10	a
+        row-2  |2	20	b
+        row-3  |3	30	c
+        row-4  |4	40	d
+        row-5  |5	50	e
+
+    Access column 'a' only:
+    df['a'] # will give you a Series
+
+    Access columns 'c' and 'a' in that order:
+    df[['c','a']] # will give you a DataFrame
+
+    Access rows 1 and 3 (row numbers):
+    df.iloc[[1,3]]
+
+    Access rows with row labels "row-1", "row-5"
+    df.loc[["row-1", "row-5"]]
+
+    Access rows 0 and 2 and columns 0 to 1 (inclusive)
+    df.iloc[0:3, 0:2]
+
+    Access last 2 rows and last 2 cols:
+    df.iloc[-2:, -2:]
+
+    Access last 2 rows only:
+    df.iloc[-2:]
+
+    Access last 2 columns only:
+    df.iloc[:,-2:]
+
+    Access rows wherever we have even value for column a:
+    df[df['a']%2 == 0]
+
+    (or)
+
+    df.loc[df['a']%2 == 0]
+
+    Set the value of col-a wherever we have even values of a. Add 10
+    df.loc[df['a']%2 == 0, 'a'] += 10
+
+    Divide the values of a by b
+    df['a']/df['b']
+
+    You can apply any arithmetic value
+
+    Access last 3 rows in reverse order:
+    df.iloc[-1:-4:-1]
+
+    To access only the last 2 columns:
+    df.iloc[:, -2:]
+
+12. len(df) will give you the number of rows
+
+13. df.shape will give you a tuple with total rows and columns of data frame
+
+14. df.size will give you the number of elements of df
+
+15. df.dtypes will show the data types of columns
+
+16. df['a'] = df['a'].astype(float) # to convert the data type of a column
+    df.astype({'a':float, 'b':str}) # will change the data types of the columns
+
+17. To parse dates while reading the data frame use:
+    df = pd.read_csv(..., parse_dates=['col_a', 'col_b'...])
+    where 'col_a', 'col_b' contain dates
+
+18. df.head()
+
+19. df.tail()
+
+20. df.sort_values(by=[...], ascending=[True, False...])
+    Example:
+      df.sort_values('a', ascending=False)
+      df.sort_values(['a', 'b'], ascending=[False, True])
+
+21. df.sort_index(ascending=True/False)
+
+22. S.value_counts()
+    Will get the number of times each value is present in the series.
+    Use value_counts() to count the values of a Series object
+    Use value_counts(normalize=True) to normalize the counts (you will get proportion)
+    Ignores the Nulls
+    Use value_counts(dropna=False) to count the number of nulls in the Series or a DataFrames's column
+
+23. Filtering:
+    * We can filter rows using several conditions.
+    * Simple Conditions can be combined to form complex conditions using bitwise operators: &, |, ~ and brackets.
+    * & is for AND, | is for OR and ~ is for NOT
+    * To combine multiple conditions use ()
+    * Use relational operators ==, !=, <, >, <=, >= to compare values
+
+24. Applying string functions on a object column.
+    Example:
+      df["Gross"] = df["Gross"].str.replace("$","").str.replace(",","").astype(float)
+
+25. IMPORTANT:
+    A. If you provide a list of values (ex: df[['a', 'b']]) then you will get a DataFrame with only columns a and b
+    B. If you provide a list of True/False values, then those values are used to qualify the rows.
+    Example: df[[True, False ...].
+    NOTE that the list of True/False values must be of the same length as the number of rows in the data frame.
+    C. If we use loc or iloc option, then we can supply True/False list for both columns and also for rows.
+    D. Also it is VERY IMPORTANT to remember that to selectively update the values of a column, you MUST use loc or iloc options only (more on this later...).
+    E. Although it looks complex, it's better to always use loc or iloc ways of accessing the columns and updating them.
+    F. For selective updates to a column, always use iloc or loc options.
+       For example, if you want to update the values of year 1999 to 2040, use: df.loc[df['year'] == 1999,'year'] = 2040
+       Assuming that df has 'a' and 'b' columns
+       df.loc[df['a'] == 0, ['a','b']] = 100 will update all elements (rows) wherever we have df['a'] == 0 condition satisfied
+    G. You can apply any str function using the df['col_name'].str method.
+    H. The df['col_name'].str will give another Series object.
+    I. To apply subsequent str functions, you need to use multiple str. Example: df['col_name'].str.lower().str.contains('dark')
+    J. str can also be applied on index (use df.index.str)
+
+26. Notes on groupby
+    a. Use groupby() method on the DataFrame to group the data based on a column
+    b. You can apply an agg method on the groupby to get aggregated data
+    c. It will return a Series object
+    d. You can group by multiple columns and apply multiple aggregate functions on each column.
+    EXAMPLE:
+        df_grouped = df.groupby("Studio").agg({'Gross':['sum', "count", "mean", np.median, np.std]})
+
+    e. You may get multi leveled columns when you apply group by. Change the columns accordingly.
+    f. For example:
+      In the above example, you may get the following columns:
+      print(df_grouped.columns)
+      MultiIndex([('Gross',    'sum'),
+            ('Gross',  'count'),
+            ('Gross',   'mean'),
+            ('Gross', 'median'),
+            ('Gross',    'std')],
+           )
+      You can use the following statement (to convert the multi level columns):
+      df_grouped.columns = df_grouped.columns.droplevel(0)
+
+      But you can also parse the Multi index columns and create the required column names,
+      and finally assign the generated columns to the grouped data frame.
+      df.columns = [new columns list]
+      or df.rename(columns = {'a':'new_a','b': 'new_b' ...})
+
+Notes on drop(), dropna()
+To drop a column in a DataFrame use df.drop([list of columns], axis=1)
+To drop a list of row labels: df.drop([list of row labels], axis=1)
+
+To drop based on a specific condition, use df.iloc[] or df.loc[]
+  Example:
+    df = df.loc[df['a']%2 == 1] will drop all rows wherever df['a'] has even numbers
+
+    To drop rows of a data frame based on a condition of nulls:
+      df = df.loc[df['a'].isnull() | df['b'].isnull()]
+      But you can also use df.dropna(subset=['a', 'b'])
+      To drop all rows where ever we have nulls:
+      df.dropna()
+
+To append row(s) to a DataFrame:
+-------------------------------
+df.append(pd.DataFrame({'a':[200,300],'b':[100,200], 'c':[1,2]}))
+Assuming that the df has the following rows before append():
+    a   |	b
+  ------|---
+0	100.0 |	100
+1	2.0	  | 20
+2	3.0	  | 20
+3	100.0	| 100
+
+After append()
+
+    a	   | b 	 |  c
+    ---------------
+0	100.0	 | 100 | NaN
+1	2.0	   | 20  | NaN
+2	3.0	   | 20  | NaN
+3	100.0	 | 100 | NaN
+0	200.0	 | 100 | 1.0
+1	300.0	 | 200 | 2.0
+
+Observe that the index has duplicate values.
+Also for the new column 'c' the values are padded with Nulls for the existing rows in df
+
+To reset the index, use the ignore_index=True option of df.append()
+To raise an error if we have duplicate index values (like above), use verify_integrity=True (Default is False)
+
+df1.append(df2, igbore_index=True, verify_integrity=True) # Will append the rows of df1 with df2
+
+To append a new column, the procedure is straight forward.
+----------------------------------------------------------
+Just use df['new_col']
+Method-1:
+df['new_col'] = [list of values of size equal to df.shape[0]]
+
+Method-2:
+df['new_col'] = pd.Series object.
+In the above case, if there is any index mismatch then those are handled as follows:
+i)   Index value in DF and Series match:
+     Just add new column with the corresponding value in series
+ii)  Index is present in df, but not in series:
+      Pad new column with nulls
+iii) Index is present in series, but not in df:
+      ignore such values.
+
+27. Series object
+    A. The Series is one of two primary data structures available in pandas.
+        It is a one-dimensional labelled array for storing homogenous data.
+        An array is simply an ordered collection of values, analogous to a Python list.
+        The term "homogenous" means that the values are of the same data type.
+
+    B. Each element in the Series object can be accessed using the position of the element (starting with 0) or by a label.
+
+    C. A Series combines and expands upon the best features of Python’s native data structures.
+       Like a list, a Series holds its values in a sequenced order. Like a dictionary, each value is accessed by a key or label.
+
+    D. Multidimensional pandas data structures like the DataFrame are composed of one or more Series objects joined together.
+
+    E. To declare a Series object use: pd.Series()
+
+    F. To create a Series object with a list of values use pd.Series(<list_obj>)
+       Example: pd.Series([1,2,3,4]) will create a Series object with index labels as [0, 1, 2, 3, 4]
+       The order of the elements in the input list is preserved
+
+    G. To append a value to a Series object, you can use append. But the value must be a Series object.
+    Example:
+          s = pd.Series([1,2,3,4])
+          s = s.append(pd.Series(5))
+          # The index of s will be [0, 1, 2, 3, 0] for [1, 2, 3, 4, 5] values, after append()
+          # To make the index as [0, 1, 2, 3, 4], use ignore_index option of append()
+          s = s.append(pd.Series([10,20,30,40]), ignore_index=True)
+          # will append 10, 20, 30 40 to existing elements of s
+          To drop an element at index use s.drop(index)
+          To drop elements at given index locations, use s.drop([list of indices]) Example:
+          s = pd.Series(range(10))
+          # Drop the last element:
+          s.drop(s.index[-1])
+          # Drop the first element:
+          s.drop(s.index[0])
+          # Drop the elements which are >= 5
+          s_gt_eq_5_index = (s >= 5).index
+          s.drop(s_gt_eq_5_index)
+
+    H. You can provide your own Index using the index option of pd.Series()
+    Example:
+    food = ['Burger', 'Pizza', 'Pasta', 'Rice', 'Spagetti']
+    day = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+    s = pd.Series(food, index=day)
+
+    I. To access the index of a series use:
+    s.index
+
+    J. To access the values of series use:
+    s.values
+
+    K. To check for nulls:
+      s.isnull() # will return a list of True/False values (True wherever we have a Null value)
+      Example:
+        To substitute nulls with mean values: s[s.isnull] = s.mean()
+      We can also use s.fillna(value, inplace=True)
+
+    L. Check if the Series object contains all unique values use:
+       s.is_unique
+
+    M. Create a Series object with a dict
+    Example:
+      d = {'a':1,'b':2,'c':3,'d':4}
+      s = pd.Series(d)
+
+    N. Retrieving the first and last rows of a Series
+       With series also we can use loc and iloc to access the values by row labels or by row index.
+       i.   s[<label>] will give you the element at the row label <label>
+       ii.  s.iloc[0] will get the first value in the Series
+       iii. s.iloc[-1] will get the last value in the Series
+       iv.  s.iloc[-1:-5:-1] will get the last 4 values in reverse order
+       v.   s.iloc[-4:] will get the last 4 values
+       vi.  You can also use head() and tail() functions on the Series objects
+
+    O. Mathematical operations on Series
+       i.    Use s.sum() to sum the values of a Series
+       ii.   Use s.product() to multiply the values of a Series
+       iii.  Use s.cumsum() to get the cumulative sum of the elements of a Series
+       iv.   Use s.pct_change() to get the percentage change of elements (consecutive)
+       v.    Use s.mean() to get the mean of the elements
+       vi.   By default the np.nan values are ignored. To consider them use skipna=False option
+       vii.  Use s.min() to get the minimum element
+       viii. Use s.max() to get the maximum element
+       ix.   Use s.dropna() to drop the null values
+             My note: To get the index of elements where we have min or max or nan values, use something like the following:
+              list(s.index[s.isnull()]) # Get the indices wherever we have null values
+              list(s.index[s == s.min()]) # Get the indices wherever we have min values
+              list(s.index[s == s.max()]) # Get the indices wherever we have max values
+        x.   Use s.unique() to get unique values from a Series
+    P. s.describe() will show the numeric series summary stats
+    Q. You can apply arithmetic operators (+, -, *, /, //, **, %) on Series objects directly.
+    R. s.hasnans will return True is the series has at least one Null
+
+
+28. Random numbers
+    A. To generate a set of random integers use np.random.choice(). It has both the replacement=True and replacement=False options.
+    B. You may also use np.random.randint(), but I think it does not have option to generate values without replacement.
+    C. To generate a set of random values between [0,1) use np.random.random(n)
+    D. You can use s.sample() to generate samples with/without replacement from a series or data frame object.
+
+29. s.apply(), df.apply()
+apply() can be used to apply a function to each value of a Series or to each row/column of a Data Frame.
+
+Example:
+You want to find the presence of a "/" in a column and return "Yes" if present else return "No"
+
+def check_slash(s):
+    if "/" in s:
+        return "Yes"
+    else:
+        return "No"
+
+df['a'].apply(check_slash)
+
+On a Data Frame you can use apply row wise or column wise (controlled by axis)
+
+Assume that we have the following data frame:
+  a	|  b
+----|----
+0	1	| -10
+1	2	| 12
+2	3	| 18
+3	4	| 13
+4	5	| 2
+
+If you use df.apply(lambda x: x*x), then each value in the df will be squared
+If you use df.apply(np.sum), then the values of each column are added. We will get the following:
+(a Series object with indices as ['a','b'])
+a    15
+b    35
+
+df.apply(np.sum, axis=1)
+will get sum of elements for each row. The result will be a Series object with indices same as row indices of df
+
+0    -9
+1    14
+2    21
+3    17
+4     7
+
+df.apply(np.sum, axis=0) # will get sum of columns. Same as df.apply(np.sum)
+
+29. df.values and s.values will give the values of data frame (as numpy matrix) and as numpy array
+
+30. df.index or s.index will get the index values of data frame df, and series s.
+
+31. df.columns will get the list of data frame's columns
+
+32. df.shape will give a tuple (n, m), where n = # of rows and m = # of columns
+
+33. To sample some rows from the data frame use df.sample(n, replace=True/False).
+    You can also use s.sample(n, replace=True) to sample rows from a series
+
+34. sum(), product(), cumsum(), min(), max(), nunique() (nunique() will give the number of unique values)
+      These functions can be applied on data frames or on series.
+      When applied on a data frame you will get a series object.
+      On a DataFrame, these functions can be applied row wise or column wise. Default is column wise.
+      You can use axis=0 for column wise, axis=1 for row wise.
+      The cumsum() when applied on data frame, will not return a series.
+      It just gives back a data frame with cumulative sum for each column
+      nunique() will give back the number of unique values for each row or column (default is column level)
+      Use axis=0 for column wise and axis = 1 for row wise.
+
+35. To change the index of a DataFrame:
+        To make the column of a data frame as its index use df.set_index(col_name, inplace=True/False)
+
+36. To rename the columns of a data frame:
+          df.rename(columns={'a': 'new_a', 'b':'new_b'...})
+
+37. A pandas data frame and series object can have duplicate index values. But I do not think the data frame can have a duplicate column
+
+38. nlargest(n=5, columns="a"), nsmallest(n=5, columns="b")
+    Will get the n largest or smallest values.
+
+39. df.info() will show the details of all columns of the data frame.
+      Such as column names, the number of non-nulls, the data type of the columns, the size of the data frame.
+
+40. To change the data types of columns of a data frame:
+    df.astype({'a':float, 'b': str...})
+
+41. To rename columns selectively:
+      df.rename(columns={'a': 'new_a', 'b': 'new_b' ...})
+
+42. To rename all columns use:
+        df.columns = <list of new column names>
+
+43. To find all null values in a dataframe use df.isnull()
+    To find the number of nulls for each column in a data frame use:
+    df.isnull().sum()
+
+    To fill all nulls in a data frame with a specific value:
+    df.fillna(value=..., inplace=True)
+
+    To find all the notnull values:
+    df.notnull() # returns a matrix with True/False values (True wherever we have a non-null value)
+
+    To drop all rows wherever we have null values:
+    df.dropna()
+
+    To drop all rows wherever we have nulls in a specific set of columns use:
+    df.dropna(subset=['a','b'...])
+
+44. Usually if the data type of a column is object type, then it occupies a lot of space.
+    If the column has very low number of unique categorical values, then its better to convert that from object type to category type.
+    Example:
+    df['a'] = df['a'].astype("category")
+
+    This will drastically reduce the size of the data frame
+
+45. Dealing with duplicates
+    -----------------------
+    * Use the method df[col].duplicated() to find determine if the value in col is a duplicate or not.
+    * Returns True if a specific record is a duplicate.
+    * You have 2 options for keep. last and first. By default, keep="first", which means only the first value is considered as the non-duplicate.
+      Any subsequent rows with same value is considered as duplicate.
+    * keep="last" will force the last value as non-duplicate
+    * The None or np.nan values are considered, and only one NaN value is retained (this means all none values are considered as equal values)
+    * duplicated() can also be applied at the data frame level also.
+    * Example: df.duplicated() will return a Series object with True/False values and we get True wherever we have duplicate records
+    * Use subset=[col-1, col-2...] of the duplicated() to confine the duplicate analysis to just some columns of the data frame
+    * drop_duplicates() will drop the duplicates. It also accepts keep="first" or "last" as input (default is keep="first").
+    * It also has inplace=True or False option, the default being inplace=False. Another important option of drop_duplicates() is the subset=['a','b'...] option. It confines the duplicate evaluation to just a list of columns.
+    * The keep parameter will also accept another option False. If provided, it will delete all duplicate columns.
+
+46. isin() will help us to check if the value in a series or df column is present in a list. Gives back True, if the value is present in the list provided under isin()
+      df[df['a'].isin([1,2,3,4])] will select the rows in df where ever the value of col a is 1 or 2 or 3 or 4.
+
+47. String methods on data frame columns
+    * We can apply any string function on a data frames's column, by addressing the column as df['col_a'].str.
+    * The column on which you apply the str must be a string type.
+    * Example:
+      To strip the white spaces:
+          df['a'].str.strip()
+      To strip the white spaces, and convert the column data to lower case:
+          df['a'].str.strip().str.lower()
+      Useful string functions:
+          s.strip()
+          s.lstrip()
+          s.rstrip()
+          s.upper()
+          s.lower()
+          s.replace()
+          s[::-1] (to reverse a string)
+          The + and * operator of string
+          The format f'...{<variable>}'
+          chr() to convert ASCII value to the character
+          ord() to get the ASCII value of a character
+          s.split() to split the string by a set of characters
+          s.startswith()
+          s.endswith()
+
+    * If we apply split() on a string, it splits the string based on the delimiter provider (default is space).
+      We get a list of strings when we apply split() method on a string.
+      If we apply split() on a categorical column: df['a'].str.split(), then we will get a list of strings.
+      To access a specific element in each list of strings we can use get. for example, to access the element from the list of strings:
+      df['a'].str.split().get(-1)
+
+48. Extract columns from a data frame based on data type:
+    Use df.select_dtypes() method.
+    * First identify all the types of columns in your dataset using the following command:
+        list(set(df.dtypes))
+    * Use select_dtypes() can be used to select columns based on the data type.
+    * To get the list of all columns which are categorical, use df.select_dtypes([object])
+    * To get the list of all numeric columns use df.select_dtypes([float64, int64])
+
+49. replace() method
+      * To replace a value in a series or column (based on a condition), we can use something like the following: df.loc[condition, column] = value
+      * To replace a value irrespective of the condition we can also use df['col-a'].replace(to_replace="val-1", value="to be replaced", inplace=True)
+      * We can also replace a value with another value in a data frame irrespective of the column where the value is found
+      * Remember replace() to replace a spectfic value in the data frame irrespective of the column.
+        But to replace the data based on a condition it's better use df.loc[..., ...] = value method.
+
+50. To get the counts of each unique in a categorical column, we use df['col'].value_counts().
+    But value_counts() ignores the nulls. To include nulls, use: dropna=False
+    df.['a'].value_counts(dropna=False)
+
+    value_counts() method also has another option called normalize=True. It will normalize the counts (makes them proportions)
+
+51. PIVOT and MELT
+    --------------
+    a. A dataset can store its values in either a wide or a narrow format.
+       A wide format is great for seeing the aggregate picture, the complete story.
+       In comparison, a narrow format makes it easier to manipulate existing data and to add new data.
+    b. A pivot table can be used to transform a dataset from a narrow format to a wide format.
+       We use df.pivot_table() to pivot a table (narrow to wide)
+       We use df.melt() to melt a table (wide to narrow)
+    c. REMEMBER:
+       Pivot means NARROW TO WIDE
+       Melt means WIDE TO NARROW
+
+Read from "Chapter - 8 (Reshaping and Pivoting)" in Pandas_Notes_2 notebook...
+
+52. Exploding a list of values
+Assume that we have the following data frame:
+    a	      b
+-------|------------
+0	  1	 | Hello there
+1	  2	 | hi there
+2	  3	 | hello world
+3	  4	 | good morning
+
+We will add another column called 'c'
+df['c'] = df['b'].str.lower().str.split()
+
+  a   	b	                  c
+----|---------------|------------------
+0	1	|  Hello there	|   [hello, there]
+1	2	|  hi there	    |   [hi, there]
+2	3	|  hello world	|   [hello, world]
+3	4	|  good morning	|   [good, morning]
+
+Now we will explode the column c:
+
+df.explode(column='c')
+
+Will give you:
+
+  a	  b	          c
+  --|-------------|------
+0	1 |	Hello there	|  hello
+0	1 |	Hello there	|  there
+1	2 |	hi there	  |  hi
+1	2 |	hi there	  |  there
+2	3 |	hello world	|  hello
+2	3 |	hello world	|  world
+3	4 |	good morning|	good
+3	4 |	good morning|	morning
+
+
+See Pandas_Notes_2 for Visualization and Joins (SQL operations)
+Read this: https://pandas.pydata.org/docs/user_guide/10min.html#min
+Read this for joins: https://pandas.pydata.org/docs/getting_started/comparison/comparison_with_sql.html
